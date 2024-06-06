@@ -1,13 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Entities
 {
-    public class User : IdentityUser<int>, IEntity<int>
+    public class User : IEntity
     {
         public User()
         {
@@ -17,20 +12,14 @@ namespace Entities
         [Required]
         [StringLength(100)]
         public string FullName { get; set; }
+        public string UserName { get; set; }
+        public string PasswordHash { get; set; }
         public int Age { get; set; }
         public GenderType Gender { get; set; }
         public bool IsActive { get; set; }
         public DateTimeOffset? LastLoginDate { get; set; }
 
         public ICollection<Post> Posts { get; set; }
-    }
-
-    public class UserConfiguration : IEntityTypeConfiguration<User>
-    {
-        public void Configure(EntityTypeBuilder<User> builder)
-        {
-            builder.Property(p => p.UserName).IsRequired().HasMaxLength(100);
-        }
     }
 
     public enum GenderType
