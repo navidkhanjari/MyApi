@@ -2,6 +2,7 @@
 using Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MyApi.Models;
 using WebFramework.Api;
 
 namespace MyApi.Controllers
@@ -33,11 +34,19 @@ namespace MyApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ApiResult> Create(User user, CancellationToken cancellationToken)
+        public async Task<ApiResult<User>> Create(UserDto userDto, CancellationToken cancellationToken)
         {
-            await userRepository.AddAsync(user, cancellationToken);
+            var user = new User()
+            {
+                FullName = userDto.FullName,
+                Age = userDto.Age,
+                Gender = userDto.Gender,
+                UserName = userDto.UserName,
+            };
 
-            return new ApiResult(true, ApiResultStatusCode.Success);
+            await userRepository.AddAsync(user, userDto.Password, cancellationToken);
+
+            return user;
         }
 
         [HttpPut]

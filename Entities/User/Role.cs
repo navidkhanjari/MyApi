@@ -2,7 +2,7 @@
 
 namespace Entities
 {
-    public class Role : IEntity
+    public class Role : BaseEntity
     {
         [Required]
         [StringLength(100)]

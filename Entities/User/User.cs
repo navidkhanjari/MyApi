@@ -2,7 +2,7 @@
 
 namespace Entities
 {
-    public class User : IEntity
+    public class User : BaseEntity
     {
         public User()
         {
