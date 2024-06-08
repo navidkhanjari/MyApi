@@ -2,6 +2,7 @@
 using Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using WebFramework.Api;
 
 namespace MyApi.Controllers
 {
@@ -16,15 +17,15 @@ namespace MyApi.Controllers
         }
 
         [HttpGet]
-        public async Task<List<User>> Get()
+        public async Task<ApiResult<List<User>>> Get(CancellationToken cancellationToken)
         {
-            var user = await userRepository.TableNoTracking.ToListAsync();
+            var users = await userRepository.TableNoTracking.ToListAsync(cancellationToken);
 
-            return user;
+            return users;
         }
 
         [HttpGet("Id:int")]
-        public async Task<ActionResult<User>> Get(int Id, CancellationToken cancellationToken)
+        public async Task<ApiResult<User>> Get(int Id, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetByIdAsync(cancellationToken, Id);
 
@@ -32,13 +33,15 @@ namespace MyApi.Controllers
         }
 
         [HttpPost]
-        public async Task Create(User user, CancellationToken cancellationToken)
+        public async Task<ApiResult> Create(User user, CancellationToken cancellationToken)
         {
             await userRepository.AddAsync(user, cancellationToken);
+
+            return new ApiResult(true, ApiResultStatusCode.Success);
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update(int Id, User user, CancellationToken cancellationToken)
+        public async Task<ApiResult> Update(int Id, User user, CancellationToken cancellationToken)
         {
             var updateUser = await userRepository.GetByIdAsync(cancellationToken, Id);
 
@@ -56,7 +59,7 @@ namespace MyApi.Controllers
         }
 
         [HttpDelete]
-        public async Task<ActionResult> Delete(int Id, CancellationToken cancellationToken)
+        public async Task<ApiResult> Delete(int Id, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetByIdAsync(cancellationToken, Id);
 
