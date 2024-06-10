@@ -1,4 +1,4 @@
-﻿namespace WebFramework.Api
+﻿namespace Common.Api
 {
     public enum ApiResultStatusCode
     {
