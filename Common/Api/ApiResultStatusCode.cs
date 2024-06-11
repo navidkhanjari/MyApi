@@ -20,6 +20,9 @@ namespace Common.Api
 		ListEmpty = 4,
 
 		[Display(Name = "خطایی در پردازش رخ داد")]
-		LogicError = 5
+		LogicError = 5,
+
+		[Display(Name = "خطای احراز هویت")]
+		UnAuthorized
 	}
 }
