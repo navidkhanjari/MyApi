@@ -1,6 +1,8 @@
 using Autofac.Core;
 using Data;
 using Data.Repositories;
+using ElmahCore.Mvc;
+using ElmahCore.Sql;
 using Microsoft.EntityFrameworkCore;
 using WebFramework.Middlewares;
 
@@ -16,6 +18,12 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
 	options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer"));
+});
+
+builder.Services.AddElmah<SqlErrorLog>(options =>
+{
+	options.Path = "/elmah-errors";
+	options.ConnectionString = builder.Configuration.GetConnectionString("Elmah");
 });
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
@@ -34,6 +42,8 @@ app.UseCustomExceptionHandler();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseElmah();
 
 app.MapControllers();
 
