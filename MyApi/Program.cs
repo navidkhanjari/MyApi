@@ -1,12 +1,17 @@
-using Autofac.Core;
 using Data;
 using Data.Repositories;
 using ElmahCore.Mvc;
 using ElmahCore.Sql;
 using Microsoft.EntityFrameworkCore;
+using NLog;
+using NLog.Web;
+using System.Net;
 using WebFramework.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Logging.ClearProviders();
+builder.WebHost.UseNLog();
 
 // Add services to the container.
 
@@ -31,6 +36,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 var app = builder.Build();
 
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -47,4 +53,25 @@ app.UseElmah();
 
 app.MapControllers();
 
-app.Run();
+
+//Set deafult proxy
+WebRequest.DefaultWebProxy = new WebProxy("http://127.0.0.1:8118", true) { UseDefaultCredentials = true };
+
+var logger = LogManager.GetCurrentClassLogger();
+
+try
+{
+	logger.Debug("init main");
+	app.Run();
+}
+catch (Exception ex)
+{
+	//NLog: catch setup errors
+	logger.Error(ex, "Stopped program because of exception");
+	throw;
+}
+finally
+{
+	// Ensure to flush and stop internal timers/threads before application-exit (Avoid segmentation fault on Linux)
+	LogManager.Shutdown();
+}
